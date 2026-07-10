@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Preferences{% endblock %}
+{% block content %}
+<section class="panel">
+  <h1>News Preferences</h1>
+  <form method="post" class="form">
+    <div class="chips">
+      {% for category in categories %}
+        <label class="chip"><input type="checkbox" name="preferences" value="{{ category }}" {% if category in selected %}checked{% endif %}> {{ category }}</label>
+      {% endfor %}
+    </div>
+    <button class="button" type="submit">Save preferences</button>
+  </form>
+</section>
+{% endblock %}

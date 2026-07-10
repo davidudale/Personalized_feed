@@ -1,0 +1,20 @@
+```plantuml
+@startuml
+start
+
+:User opens app;
+:Register / Log in;
+:Load preferences;
+:Fetch RSS articles;
+:Process articles with NLP;
+:Generate recommendations;
+:Display personalized feed;
+
+if (User interacts?) then (Yes)
+  :Save like / save / skip;
+  :Update recommendations;
+endif
+
+stop
+@enduml
+```

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Personalized News Aggregator{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="topbar" aria-label="Main navigation">
+      <a class="brand" href="{{ url_for('index') }}" aria-label="NLP News home">
+        <span class="brand-mark">N</span>
+        <span class="brand-copy">
+          <span>NLP News</span>
+          <small>Personalized briefing</small>
+        </span>
+      </a>
+
+      <input class="nav-toggle" type="checkbox" id="nav-toggle" aria-label="Toggle navigation">
+      <label class="nav-toggle-button" for="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+      <div class="navlinks">
+        {% if session.get("user_id") %}
+          <a class="{{ 'active' if request.endpoint == 'feed' else '' }}" href="{{ url_for('feed') }}">Feed</a>
+          <a class="{{ 'active' if request.endpoint == 'preferences' else '' }}" href="{{ url_for('preferences') }}">Preferences</a>
+          <span class="user-pill">{{ session.get("name", "User") }}</span>
+          <a class="nav-cta" href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+          <a class="{{ 'active' if request.endpoint == 'login' else '' }}" href="{{ url_for('login') }}">Login</a>
+          <a class="nav-cta" href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+      </div>
+    </nav>
+  </header>
+
+  <main class="page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <section class="alerts">
+          {% for category, message in messages %}
+            <p class="alert {{ category }}">{{ message }}</p>
+          {% endfor %}
+        </section>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

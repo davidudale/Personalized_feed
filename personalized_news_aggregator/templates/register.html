@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<section class="panel narrow">
+  <h1>Create Account</h1>
+  <form method="post" class="form">
+    <label>Name <input name="name" required></label>
+    <label>Email <input type="email" name="email" required></label>
+    <label>Password <input type="password" name="password" required minlength="6"></label>
+    <fieldset>
+      <legend>Choose preferred categories</legend>
+      <div class="chips">
+        {% for category in categories %}
+          <label class="chip"><input type="checkbox" name="preferences" value="{{ category }}"> {{ category }}</label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <button class="button" type="submit">Register</button>
+  </form>
+</section>
+{% endblock %}

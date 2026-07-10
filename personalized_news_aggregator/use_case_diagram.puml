@@ -1,0 +1,40 @@
+@startuml
+left to right direction
+
+actor Visitor
+actor "Registered User" as User
+actor "RSS News Source" as RSS
+
+rectangle "Personalized News Aggregator" {
+  usecase "Register Account" as UC_Register
+  usecase "Log In" as UC_Login
+  usecase "View Personalized Feed" as UC_Feed
+  usecase "Manage Preferences" as UC_Preferences
+  usecase "Browse Category" as UC_Category
+  usecase "Like / Save / Skip Article" as UC_Interact
+  usecase "Refresh RSS Articles" as UC_Refresh
+  usecase "Fetch RSS Feed" as UC_Fetch
+  usecase "Process Article with NLP" as UC_NLP
+  usecase "Generate Recommendations" as UC_Recommend
+  usecase "Show Precision@10" as UC_Precision
+}
+
+Visitor --> UC_Register
+Visitor --> UC_Login
+
+User --> UC_Feed
+User --> UC_Preferences
+User --> UC_Category
+User --> UC_Interact
+User --> UC_Refresh
+
+RSS --> UC_Fetch
+
+UC_Feed ..> UC_Recommend : <<include>>
+UC_Feed ..> UC_Precision : <<include>>
+UC_Recommend ..> UC_NLP : <<include>>
+UC_Refresh ..> UC_Fetch : <<include>>
+UC_Refresh ..> UC_NLP : <<include>>
+UC_Interact ..> UC_Feed : <<extend>>
+
+@enduml

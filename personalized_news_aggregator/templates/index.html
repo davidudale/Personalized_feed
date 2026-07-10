@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Personalized News Aggregator{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">Final year project MVP</p>
+    <h1>Personalized News Aggregator Using NLP</h1>
+    <p class="lead">Collect news from RSS feeds, classify topics, analyze sentiment, extract keywords, and recommend articles based on user preferences.</p>
+    <div class="actions">
+      <a class="button" href="{{ url_for('register') }}">Create account</a>
+      <a class="button ghost" href="{{ url_for('login') }}">Login</a>
+    </div>
+  </div>
+
+  <section class="image-slider" aria-label="Newspaper image highlights">
+    <input type="radio" name="newspaper-slide" id="slide-1" checked>
+    <input type="radio" name="newspaper-slide" id="slide-2">
+    <input type="radio" name="newspaper-slide" id="slide-3">
+
+    <div class="slides">
+      <figure class="slide">
+        <img src="https://images.unsplash.com/photo-1566378246598-5b11a0d486cc?auto=format&fit=crop&q=80&w=1200" alt="Several printed newspaper pages laid together">
+        <figcaption>Fresh sources, gathered in one feed.</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&q=80&w=1200" alt="A person sitting on a bench reading a newspaper">
+        <figcaption>Personal reading patterns shape every recommendation.</figcaption>
+      </figure>
+      <figure class="slide">
+        <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=1200" alt="Close-up of business newspapers stacked together">
+        <figcaption>Topics, sentiment, and keywords surfaced by NLP.</figcaption>
+      </figure>
+    </div>
+
+    <div class="slider-dots" aria-label="Choose newspaper image">
+      <label for="slide-1"><span>Newspaper pages</span></label>
+      <label for="slide-2"><span>Reader</span></label>
+      <label for="slide-3"><span>Business news</span></label>
+    </div>
+  </section>
+</section>
+{% endblock %}

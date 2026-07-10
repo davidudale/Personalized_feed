@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Personalized Feed{% endblock %}
+{% block content %}
+<section class="toolbar">
+  <div>
+    <p class="eyebrow">Welcome, {{ session.get("name") }}</p>
+    <h1>Your Personalized Feed</h1>
+    <p class="muted">Preferences: {{ preferences|join(", ") if preferences else "not selected yet" }}. Simulated Precision@10: {{ "%.2f"|format(precision) }}</p>
+  </div>
+  <form method="post" action="{{ url_for('refresh') }}">
+    <button class="button" type="submit">Refresh RSS</button>
+  </form>
+</section>
+
+<section class="feed-grid">
+  {% for item in recommendations %}
+    {% set article = item.article %}
+    {% set visual = loop.index0 % 3 %}
+    <article class="feed-card visual-{{ visual }}">
+      <div class="feed-card-media" aria-hidden="true"></div>
+
+      <div class="feed-card-top">
+        <div class="source-avatar">{{ article.source[:1]|upper if article.source else "N" }}</div>
+        <div class="feed-source">
+          <strong>{{ article.source or "News Source" }}</strong>
+          <span>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.6c0 5.3-8.8 10.4-8.8 10.4S3.2 13.9 3.2 8.6A4.7 4.7 0 0 1 12 6.2a4.7 4.7 0 0 1 8.8 2.4Z"/></svg>
+            {{ article.sentiment }}
+          </span>
+        </div>
+        <div class="feed-score">
+          <strong>{{ "%.0f"|format(item.score * 100) }}</strong>
+          <span>score</span>
+        </div>
+      </div>
+
+      <div class="feed-card-body">
+        <div class="feed-tags">
+          <span>{{ article.category }}</span>
+          <span>{{ article.published or "No date" }}</span>
+        </div>
+        <h2><a href="{{ article.url }}" target="_blank" rel="noopener">{{ article.title }}</a></h2>
+        <p>{{ article.summary|striptags|truncate(150) }}</p>
+      </div>
+
+      {% if article.keywords %}
+        <div class="feed-keywords">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10.5V4h-6.5L4 13.5 10.5 20 20 10.5Z"/><path d="M16.5 7.5h.01"/></svg>
+          {{ article.keywords|truncate(70) }}
+        </div>
+      {% endif %}
+
+      <div class="feed-card-actions">
+        <form method="post" action="{{ url_for('interact', article_id=article.id, action='view') }}"><button title="Mark as viewed"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>Viewed</button></form>
+        <form method="post" action="{{ url_for('interact', article_id=article.id, action='like') }}"><button title="Like article"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 22V10M4 22h4a2 2 0 0 0 2-2v-8.5l1.6-5.2A2.6 2.6 0 0 1 14.1 4a1.9 1.9 0 0 1 1.9 2.2L15.5 10H20a2 2 0 0 1 2 2.3l-1.1 7A3.2 3.2 0 0 1 17.7 22H4Z"/></svg>Like</button></form>
+        <form method="post" action="{{ url_for('interact', article_id=article.id, action='save') }}"><button title="Save article"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg>Save</button></form>
+        <form method="post" action="{{ url_for('interact', article_id=article.id, action='skip') }}"><button title="Skip article"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 5 14 14M19 5 5 19"/></svg>Skip</button></form>
+      </div>
+    </article>
+  {% else %}
+    <p>No articles available yet. Use Refresh RSS to fetch live articles.</p>
+  {% endfor %}
+</section>
+{% endblock %}
