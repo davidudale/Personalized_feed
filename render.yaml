@@ -3,6 +3,6 @@ services:
     name: personalized-news-aggregator
     env: python
     root: personalized_news_aggregator
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
     startCommand: gunicorn app:app
     plan: free
