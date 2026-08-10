@@ -2,7 +2,7 @@ services:
   - type: web
     name: personalized-news-aggregator
     env: python
-    root: personalized_news_aggregator
+    runtime: python-3.11
     buildCommand: pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn personalized_news_aggregator.app:app
     plan: free
