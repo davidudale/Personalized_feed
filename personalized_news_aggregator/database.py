@@ -1,7 +1,7 @@
 from contextlib import closing
 
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import psycopg
+from psycopg.rows import dict_row
 
 from config import CATEGORIES, DATABASE_URL
 
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS interactions (
 
 class DatabaseConnection:
     def __init__(self):
-        self.conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+        self.conn = psycopg.connect(DATABASE_URL, row_factory=dict_row)
 
     def execute(self, query, params=None):
         cursor = self.conn.cursor()
