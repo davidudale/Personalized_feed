@@ -52,6 +52,54 @@ def clean_text(text):
     return re.sub(r"\s+", " ", text).strip()
 
 
+def text_preprocessing(text, lemmatize=True, remove_stopwords=True, min_len=2):
+    """Preprocess text and return a list of cleaned tokens.
+
+    Steps:
+    - remove HTML, URLs, emails
+    - basic cleaning and lowercasing
+    - tokenization (letters only)
+    - optional lemmatization via spaCy
+    - optional stopword removal
+
+    Returns a list of tokens (strings).
+    """
+    if not text:
+        return []
+
+    # remove urls and emails early
+    text = re.sub(r"http\S+|www\.\S+", " ", text)
+    text = re.sub(r"\b[\w\.-]+@[\w\.-]+\.\w+\b", " ", text)
+
+    # basic cleaning + lowercase
+    text = clean_text(text).lower()
+
+    # tokenization: keep only alphabetic tokens of minimum length
+    tokens = re.findall(r"[a-zA-Z]{%d,}" % (min_len,), text)
+
+    # lemmatize if spaCy available
+    nlp = _load_spacy()
+    if lemmatize and nlp and tokens:
+        doc = nlp(" ".join(tokens))
+        lemmas = []
+        for token in doc:
+            lemma = token.lemma_.lower()
+            if lemma == "-pron-":
+                lemma = token.text.lower()
+            if len(lemma) >= min_len:
+                lemmas.append(lemma)
+        tokens = lemmas
+
+    # remove stopwords
+    if remove_stopwords:
+        stop = set(STOPWORDS)
+        if nlp:
+            stop |= set([w.lower() for w in nlp.Defaults.stop_words])
+        tokens = [t for t in tokens if t not in stop]
+
+    return tokens
+
+
 def classify_topic(text):
     tokens = set(re.findall(r"[a-zA-Z]+", text.lower()))
     scores = {
