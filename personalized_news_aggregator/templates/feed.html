@@ -15,8 +15,9 @@
 <section class="feed-grid">
   {% for item in recommendations %}
     {% set article = item.article %}
-    {% set visual = loop.index0 % 3 %}
-    <article class="feed-card visual-{{ visual }}">
+    {% set category_slug = article.category|lower|replace(' ', '-') if article.category else 'default' %}
+    {% set is_preferred = article.category in preferences if preferences else false %}
+    <article class="feed-card category-{{ category_slug }} {% if is_preferred %}is-preferred{% endif %}">
       <div class="feed-card-media" aria-hidden="true"></div>
 
       <div class="feed-card-top">
@@ -36,6 +37,12 @@
 
       <div class="feed-card-body">
         <div class="feed-tags">
+          {% if is_preferred %}
+            <span class="preferred-tag">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" style="fill: currentColor; width: 0.85em; height: 0.85em;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              For You
+            </span>
+          {% endif %}
           <span>{{ article.category }}</span>
           <span>{{ article.published or "No date" }}</span>
         </div>
