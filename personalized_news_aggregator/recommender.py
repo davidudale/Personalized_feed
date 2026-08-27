@@ -21,6 +21,7 @@ def _article_text(article):
 
 def recommend_articles(user_id, limit=30):
     with closing(get_connection()) as conn:
+        user = conn.execute("SELECT preferences FROM users WHERE id = %s", (user_id,)).fetchone()
         articles = conn.execute(
             """
             SELECT *
@@ -34,6 +35,14 @@ def recommend_articles(user_id, limit=30):
             """,
             (user_id,),
         ).fetchall()
+
+    if not articles:
+        return []
+
+    if user and user["preferences"]:
+        preferred_categories = {c.strip() for c in user["preferences"].split(",") if c.strip()}
+        if preferred_categories:
+            articles = [a for a in articles if a["category"] in preferred_categories]
 
     if not articles:
         return []
