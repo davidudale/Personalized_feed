@@ -25,18 +25,23 @@ def login_required(view):
     return wrapped
 
 
+db_initialized = False
+
 @app.before_request
 def bootstrap_database():
-    init_db()
-    with get_connection() as conn:
-        conn.execute("DELETE FROM articles WHERE published = 'Sample data'")
-        conn.commit()
-        existing = conn.execute("SELECT COUNT(*) AS count FROM articles").fetchone()["count"]
-        if not existing:
-            try:
-                fetch_rss_articles(limit_per_feed=6, fetch_full_text=False)
-            except Exception:
-                pass
+    global db_initialized
+    if not db_initialized:
+        init_db()
+        with get_connection() as conn:
+            conn.execute("DELETE FROM articles WHERE published = 'Sample data'")
+            conn.commit()
+            existing = conn.execute("SELECT COUNT(*) AS count FROM articles").fetchone()["count"]
+            if not existing:
+                try:
+                    fetch_rss_articles(limit_per_feed=6, fetch_full_text=False)
+                except Exception:
+                    pass
+        db_initialized = True
 
 
 @app.route("/")
@@ -159,6 +164,12 @@ def refresh():
     except Exception as exc:
         flash(f"Could not refresh RSS feeds: {exc}", "danger")
     return redirect(url_for("feed"))
+
+
+@app.errorhandler(500)
+def handle_internal_server_error(e):
+    import traceback
+    return f"<pre>{traceback.format_exc()}</pre>", 500
 
 
 if __name__ == "__main__":
