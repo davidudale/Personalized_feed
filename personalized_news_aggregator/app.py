@@ -33,6 +33,7 @@ def bootstrap_database():
     if not db_initialized:
         init_db()
         with get_connection() as conn:
+            conn.execute("DELETE FROM interactions WHERE article_id IN (SELECT id FROM articles WHERE published = 'Sample data')")
             conn.execute("DELETE FROM articles WHERE published = 'Sample data'")
             conn.commit()
             existing = conn.execute("SELECT COUNT(*) AS count FROM articles").fetchone()["count"]

@@ -36,8 +36,8 @@ CREATE TABLE IF NOT EXISTS interactions (
     article_id INTEGER NOT NULL,
     action TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(user_id) REFERENCES users(id),
-    FOREIGN KEY(article_id) REFERENCES articles(id)
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(article_id) REFERENCES articles(id) ON DELETE CASCADE
 );
 """
 
