@@ -4,7 +4,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from config import CATEGORIES, SECRET_KEY
-from database import get_connection, init_db, seed_sample_articles
+from database import get_connection, init_db
 from news_fetcher import fetch_rss_articles
 from nlp_pipeline import process_article
 from recommender import precision_at_k, recommend_articles
@@ -28,7 +28,15 @@ def login_required(view):
 @app.before_request
 def bootstrap_database():
     init_db()
-    seed_sample_articles(process_article)
+    with get_connection() as conn:
+        conn.execute("DELETE FROM articles WHERE published = 'Sample data'")
+        conn.commit()
+        existing = conn.execute("SELECT COUNT(*) AS count FROM articles").fetchone()["count"]
+        if not existing:
+            try:
+                fetch_rss_articles(limit_per_feed=6, fetch_full_text=False)
+            except Exception:
+                pass
 
 
 @app.route("/")
